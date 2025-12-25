@@ -11,7 +11,11 @@ import {
   signupUser,
   userUpdate,
 } from '../controllers/auth.controller.js';
-import { getLoggedInUser, verifyJWTToken, verifyJWTTokenFromOtherServerCall } from '../utils/jwt.js';
+import {
+  getLoggedInUser,
+  verifyJWTToken,
+  verifyJWTTokenFromOtherServerCall,
+} from '../utils/jwt.js';
 import {
   handleUpdatedUserCalidation,
   handleValidation,
@@ -38,6 +42,12 @@ router.patch(
   userUpdate,
 );
 router.post('/userServer/users', verifyJWTTokenFromOtherServerCall, getUsers);
-router.get('/user/:_id', verifyJWTTokenFromOtherServerCall, getUser);
+router.get('/userServer/:_id', verifyJWTTokenFromOtherServerCall, getUser);
+router.patch(
+  '/userServer/:_id',
+  verifyJWTTokenFromOtherServerCall,
+  handleUpdatedUserCalidation,
+  userUpdate,
+);
 
 export default router;

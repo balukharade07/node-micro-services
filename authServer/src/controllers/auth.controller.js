@@ -99,9 +99,9 @@ export const resetPassword = async (req, resp) => {
 
 export const getUsers = async (req, res) => {
   try {
-    console.log("==========")
+ 
     const { excludeIds = [], includeIds = [], skip = 0, limit=100 } = req.body;
-    console.log("====", req.body)
+    
     if (excludeIds?.length) {
       const allUsers = await User.aggregate([
         {
@@ -170,7 +170,7 @@ export const getUsers = async (req, res) => {
       return res.status(200).send(updatedUserList);
     }
   } catch (error) {
-    console.log("==error==", error)
+    
     return res.status(400).send('Somthing wrong!!');
   }
 };
