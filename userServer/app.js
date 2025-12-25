@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import userRoutes from './src/routes/user.routes.js';
 import cookieParser from 'cookie-parser';
 import { connectDB } from './src/config/db.js';
+import connectionRouter from './src/routes/connection.routes.js';
 
 dotenv.config();
 const app = express();
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/user', userRoutes);
+app.use('', connectionRouter);
 
 connectDB().then(() => {
   app.listen(process.env.PORT, () => {

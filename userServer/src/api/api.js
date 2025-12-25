@@ -29,7 +29,9 @@ class ApiService {
 
   _initResponseInterceptor() {
     this.api.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        return response.data;
+      },
       (error) => {
         // log internally
         console.error('Service call failed:', {

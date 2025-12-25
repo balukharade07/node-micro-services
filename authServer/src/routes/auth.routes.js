@@ -29,7 +29,7 @@ router.patch('/resetPassword/:_id', resetPassword);
 router.post('/logout', logout);
 //user Server throw call
 
-router.get('/users', verifyJWTToken, getUsers);
+router.post('/users', verifyJWTToken, getUsers);
 router.delete('/userDelete/:_id', verifyJWTToken, deleteUser);
 router.patch(
   '/user/:_id',
@@ -37,6 +37,7 @@ router.patch(
   handleUpdatedUserCalidation,
   userUpdate,
 );
+router.post('/userServer/users', verifyJWTTokenFromOtherServerCall, getUsers);
 router.get('/user/:_id', verifyJWTTokenFromOtherServerCall, getUser);
 
 export default router;

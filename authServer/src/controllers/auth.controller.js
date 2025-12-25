@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
+import mongoose from 'mongoose';
 
 export const signupUser = async (req, res) => {
   const presentUser = await User.findOne({ email: req.body.email });
@@ -97,17 +98,81 @@ export const resetPassword = async (req, resp) => {
 };
 
 export const getUsers = async (req, res) => {
-  const allUser = await User.find({}).select('-password');
-  const updatedUserList = allUser.map((item) => {
-    const user = {
-      email: item.email,
-      firstName: item.firstName,
-      lastName: item.lastName,
-      _id: item._id,
-    };
-    return user;
-  });
-  res.status(200).send(updatedUserList);
+  try {
+    console.log("==========")
+    const { excludeIds = [], includeIds = [], skip = 0, limit=100 } = req.body;
+    console.log("====", req.body)
+    if (excludeIds?.length) {
+      const allUsers = await User.aggregate([
+        {
+          $match: {
+            _id: {
+              $nin: excludeIds.map((id) => new mongoose.Types.ObjectId(id)),
+            },
+          },
+        },
+        { $sort: { createdAt: 1 } },
+        {
+          $project: { password: 0, createdAt: 0, updatedAt: 0, __v: 0 },
+        },
+        {
+          $addFields: {
+            fullName: { $concat: ['$firstName', ' ', '$lastName'] },
+          },
+        },
+        {
+          $facet: {
+            result: [{ $skip: skip }, { $limit: limit }],
+            count: [{ $count: 'count' }],
+          },
+        },
+        {
+          $project: {
+            result: 1,
+            count: { $arrayElemAt: ['$count.count', 0] },
+          },
+        },
+      ]);
+      
+      return res.status(200).send(allUsers);
+    } else if (includeIds?.length) {
+      const allUsers = await User.aggregate([
+        {
+          $match: {
+            _id: {
+              $in: includeIds.map((id) => new mongoose.Types.ObjectId(id)),
+            },
+          },
+        },
+        { $sort: { createdAt: 1 } },
+        {
+          $project: { password: 0, createdAt: 0, updatedAt: 0, __v: 0 },
+        },
+        {
+          $addFields: {
+            fullName: { $concat: ['$firstName', ' ', '$lastName'] },
+          },
+        },
+      ]);
+
+      res.status(200).send(allUsers);
+    } else {
+      const allUser = await User.find({}).select('-password');
+      const updatedUserList = allUser.map((item) => {
+        const user = {
+          email: item.email,
+          firstName: item.firstName,
+          lastName: item.lastName,
+          _id: item._id,
+        };
+        return user;
+      });
+      return res.status(200).send(updatedUserList);
+    }
+  } catch (error) {
+    console.log("==error==", error)
+    return res.status(400).send('Somthing wrong!!');
+  }
 };
 
 export const deleteUser = async (req, res) => {
