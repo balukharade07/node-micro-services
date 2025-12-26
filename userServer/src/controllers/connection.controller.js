@@ -100,7 +100,6 @@ export const connectionRequestReceived = async (req, res) => {
       getHeaders(token),
     );
     const usersMap = {};
-    console.log('usersResponse', usersResponse);
     usersResponse.forEach((user) => {
       usersMap[user._id] = user;
     });
