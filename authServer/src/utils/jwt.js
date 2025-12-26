@@ -9,14 +9,12 @@ export const generateToken = (payload) => {
 
 export const verifyJWTToken = async (req, res, next) => {
   try {
-    console.log("=====cookies====",req.cookies)
     const cookies = req.cookies;
     const { token } = cookies;
     
     if (!token) return res.status(401).json({ error: 'No token provided' });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("====decoded=====", decoded)
     if (!decoded)
       return res.status(401).json({ error: 'Invalid or expired token' });
     const user = await User.findById(decoded._id);

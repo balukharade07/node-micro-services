@@ -31,8 +31,6 @@ router.get('/isLoggendIn', getLoggedInUser, loggedInUser);
 router.post('/forgotPassword/:email', forgotPassword);
 router.patch('/resetPassword/:_id', resetPassword);
 router.post('/logout', logout);
-//user Server throw call
-
 router.post('/users', verifyJWTToken, getUsers);
 router.delete('/userDelete/:_id', verifyJWTToken, deleteUser);
 router.patch(
@@ -41,8 +39,11 @@ router.patch(
   handleUpdatedUserCalidation,
   userUpdate,
 );
+
+//user Server throw call
 router.post('/userServer/users', verifyJWTTokenFromOtherServerCall, getUsers);
 router.get('/userServer/:_id', verifyJWTTokenFromOtherServerCall, getUser);
+router.delete('/userServer/:_id', verifyJWTTokenFromOtherServerCall, deleteUser);
 router.patch(
   '/userServer/:_id',
   verifyJWTTokenFromOtherServerCall,

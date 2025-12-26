@@ -178,9 +178,9 @@ export const getUsers = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params);
-    res.status(200).send('Deleted Successfully...!!');
+    return res.status(200).send('Deleted Successfully...!!');
   } catch (error) {
-    res.status(400).send('Somthing wrong!!');
+    return res.status(400).send('Somthing wrong!!');
   }
 };
 
