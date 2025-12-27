@@ -12,7 +12,7 @@ export const connectionRequestSend = async (req, res) => {
       return res.status(400).json({ message: `Invalid type ${status}` });
     }
 
-    const toUser = await api.get(`/auth/user/${toUserId}`, getHeaders(token));
+    const toUser = await api.get(`/auth/userServer/${toUserId}`, getHeaders(token));
 
     if (!toUser) {
       return res.status(400).json({ message: 'Invalid user id!' });
