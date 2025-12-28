@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import validator from 'validator'
+import mongoose from 'mongoose';
+import validator from 'validator';
 
 const connectionSchema = new mongoose.Schema(
   {
@@ -11,24 +11,24 @@ const connectionSchema = new mongoose.Schema(
     toUserId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-       validate: {
-      validator(value) {
-        return !this.fromUserId.equals(value);
+      validate: {
+        validator(value) {
+          return !this.fromUserId.equals(value);
+        },
+        message: "Can't send connection request to yourself!",
       },
-      message: "Can't send connection request to yourself!",
-    },
       // ref: 'Users'
     },
     status: {
       type: String,
       required: true,
       enum: {
-        values: ["ignored", "interested", "accepeted", "rejected"],
+        values: ['ignored', 'interested', 'accepeted', 'rejected'],
         message: `{VALUE} is incorrect status type.`,
       },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 connectionSchema.index({ fromUserId: 1, toUserId: 1 });
@@ -39,4 +39,4 @@ connectionSchema.pre('save', function () {
   }
 });
 
-export default mongoose.model("connection", connectionSchema);
+export default mongoose.model('connection', connectionSchema);
