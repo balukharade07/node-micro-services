@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import cookie from 'cookie';
 import Chat from '../models/Chat.js';
+import { addOnlineUser, removeOnlineUser } from './onlineUsers.js';
 
 const getSecretRoomId = (userId, targetUserId) => {
   return crypto
@@ -46,6 +47,13 @@ export const initializationSocket = (server) => {
   });
 
   io.on('connection', (socket) => {
+    const userId = socket.user._id.toString();
+
+    socket.on('onlineUser', ({ firstName, userId }) => {
+      addOnlineUser(userId, socket.id);
+      socket.broadcast.emit('user-online', { userId });
+    });
+
     socket.on('joinChat', ({ firstName, userId, targetUserId }) => {
       const room = getSecretRoomId(userId, targetUserId);
       socket.join(room);
@@ -66,7 +74,7 @@ export const initializationSocket = (server) => {
               messages: [],
             });
           }
-          
+
           chat.messages.push({
             senderId: userId,
             text,
@@ -81,13 +89,21 @@ export const initializationSocket = (server) => {
             createdAt: new Date(),
           });
         } catch (error) {
-          console.log("Authentication error: Invalid token",  error)
+          console.log('Authentication error: Invalid token', error);
         }
       },
     );
 
-    socket.on('disconnect', () => {});
-  });
+    socket.on('message-seen', async ({ messageId }) => {
+      await Chat.findByIdAndUpdate(messageId, {
+        $addToSet: { seenBy: socket.user._id },
+      });
+    });
 
+    socket.on('disconnect', () => {
+      removeOnlineUser(userId, socket.id);
+      socket.broadcast.emit('user-offline', { userId });
+    });
+  });
   return io;
 };

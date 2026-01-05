@@ -10,6 +10,9 @@ const chatMessages = new mongoose.Schema(
       type: String,
       required: true,
     },
+    seenBy: {
+      type: mongoose.Schema.Types.ObjectId,
+    },
   },
   { timestamps: true },
 );

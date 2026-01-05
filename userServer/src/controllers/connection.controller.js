@@ -1,5 +1,6 @@
 import api, { getHeaders } from '../api/api.js';
 import Connection from '../models/connection.js';
+import { getOnlineUsers } from '../util/onlineUsers.js';
 
 export const connectionRequestSend = async (req, res) => {
   try {
@@ -12,7 +13,10 @@ export const connectionRequestSend = async (req, res) => {
       return res.status(400).json({ message: `Invalid type ${status}` });
     }
 
-    const toUser = await api.get(`/auth/userServer/${toUserId}`, getHeaders(token));
+    const toUser = await api.get(
+      `/auth/userServer/${toUserId}`,
+      getHeaders(token),
+    );
 
     if (!toUser) {
       return res.status(400).json({ message: 'Invalid user id!' });
@@ -192,6 +196,15 @@ export const getFeed = async (req, res) => {
       getHeaders(token),
     );
     res.status(200).send(allUsers?.[0]);
+  } catch (error) {
+    res.status(400).send('Connections not found!!');
+  }
+};
+
+export const getOnlineUser = (req, res) => {
+  try {
+    const users = getOnlineUsers();
+    return res.status(200).json({ users });
   } catch (error) {
     res.status(400).send('Connections not found!!');
   }

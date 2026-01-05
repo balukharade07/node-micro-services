@@ -6,6 +6,7 @@ import {
   connectionRequestSend,
   getConnections,
   getFeed,
+  getOnlineUser,
 } from '../controllers/connection.controller.js';
 
 const connectionRouter = express.Router();
@@ -31,5 +32,6 @@ connectionRouter.post(
 connectionRouter.post('/user/connections', verifyToken, getConnections);
 
 connectionRouter.post('/feed', verifyToken, getFeed);
+connectionRouter.post('/user/onlineUsers',verifyToken, getOnlineUser);
 
 export default connectionRouter;

@@ -66,7 +66,7 @@ export const getChat = async (req, res) => {
     const targetUser = bothUsers?.find(
       (item) => item._id.toString() === id.toString(),
     );
-    
+
     const userInfo = bothUsers?.find(
       (item) => item._id.toString() === req.user._id.toString(),
     );
@@ -109,7 +109,7 @@ export const getChat = async (req, res) => {
       message: 'Data fetch successfully!!',
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(error.response?.status || 500).json({
       message: error.response?.data?.message || 'Auth service unavailable',
     });
