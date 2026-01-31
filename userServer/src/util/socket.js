@@ -59,6 +59,20 @@ export const initializationSocket = (server) => {
       socket.join(room);
     });
 
+    socket.on('typing', ({ userId, targetUserId, user }) => {
+      const roomId = getSecretRoomId(userId, targetUserId);
+
+      socket.to(roomId).emit('typing', {
+        userId,
+        name: user.firstName,
+      });
+    });
+
+    socket.on('stopTyping', ({ userId, targetUserId }) => {
+      const roomId = getSecretRoomId(userId, targetUserId);
+      socket.to(roomId).emit('stopTyping');
+    });
+
     socket.on(
       'sendMessage',
       async ({ firstName, userId, targetUserId, text }) => {
